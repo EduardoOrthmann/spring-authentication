@@ -12,27 +12,32 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // TODO: Add JWT authentication
-    // TODO: Fix requestMatchers
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspection) throws Exception {
+        MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspection);
+
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // AUTH
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+                        .requestMatchers(
+                                mvc.pattern(HttpMethod.POST, "/auth/login"),
+                                mvc.pattern(HttpMethod.POST, "/auth/register")
+                        ).permitAll()
 
                         // PRODUCTS
-                        .requestMatchers(HttpMethod.POST, "/products").hasRole("ROLE_ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ROLE_ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ROLE_ADMIN")
+                        .requestMatchers(mvc.pattern(HttpMethod.POST, "/products")).hasRole("ADMIN")
+                        .requestMatchers(mvc.pattern(HttpMethod.PUT, "/products/**")).hasRole("ADMIN")
+                        .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/products/**")).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .build();
