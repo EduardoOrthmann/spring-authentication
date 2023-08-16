@@ -19,6 +19,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // TODO: Add JWT
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspection) throws Exception {
         MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspection);
@@ -35,6 +36,11 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // PRODUCTS
+                        .requestMatchers(
+                                mvc.pattern(HttpMethod.GET, "/products"),
+                                mvc.pattern(HttpMethod.GET, "/products/**")
+                        ).permitAll()
+
                         .requestMatchers(mvc.pattern(HttpMethod.POST, "/products")).hasRole("ADMIN")
                         .requestMatchers(mvc.pattern(HttpMethod.PUT, "/products/**")).hasRole("ADMIN")
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/products/**")).hasRole("ADMIN")
