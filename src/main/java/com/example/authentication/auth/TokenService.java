@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
 @Service
@@ -21,7 +22,9 @@ public class TokenService {
     public String generateToken(User user) {
         try {
             return JWT.create()
+                    .withIssuer("authentication-api")
                     .withSubject(user.getLogin())
+                    .withClaim("id", String.valueOf(user.getId()))
                     .withExpiresAt(getExpirationTime())
                     .sign(Algorithm.HMAC256(secret));
         } catch (JWTCreationException ex) {
@@ -32,6 +35,7 @@ public class TokenService {
     public String validateToken(String token) {
         try {
             return JWT.require(Algorithm.HMAC256(secret))
+                    .withIssuer("authentication-api")
                     .build()
                     .verify(token)
                     .getSubject();
@@ -41,7 +45,7 @@ public class TokenService {
     }
 
     private Instant getExpirationTime() {
-        return Instant.now().plus(2, ChronoUnit.DAYS);
+        return LocalDateTime.now().plusDays(2).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public Optional<String> getTokenFromHeader(HttpServletRequest request) {

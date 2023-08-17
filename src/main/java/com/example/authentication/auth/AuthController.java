@@ -1,6 +1,7 @@
 package com.example.authentication.auth;
 
 import com.example.authentication.user.User;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @PermitAll
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequestDTO authRequest) {
         return authService.login(authRequest)
                 .map(auth -> ResponseEntity.ok().header("Authorization", auth).build())
@@ -25,6 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @PermitAll
     public ResponseEntity<?> register(@RequestBody @Valid AuthRegisterRequestDTO authRegisterRequest) {
         User user = authService.register(authRegisterRequest);
 
