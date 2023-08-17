@@ -19,9 +19,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequestDTO authRequest) {
-        authService.login(authRequest);
-
-        return ResponseEntity.ok().build();
+        return authService.login(authRequest)
+                .map(auth -> ResponseEntity.ok().header("Authorization", auth).build())
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     @PostMapping("/register")

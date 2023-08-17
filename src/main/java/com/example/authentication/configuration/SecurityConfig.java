@@ -12,14 +12,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final JwtSecurityFilter jwtSecurityFilter;
 
-    // TODO: Add JWT
+    public SecurityConfig(JwtSecurityFilter jwtSecurityFilter) {
+        this.jwtSecurityFilter = jwtSecurityFilter;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspection) throws Exception {
         MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspection);
@@ -46,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern(HttpMethod.DELETE, "/products/**")).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
