@@ -1,7 +1,5 @@
 package com.example.authentication.product;
 
-import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +16,11 @@ public class ProductController {
     }
 
     @GetMapping
-    @PermitAll
     public ResponseEntity<List<Product>> findAll() {
         return ResponseEntity.ok(productService.findAll());
     }
 
     @GetMapping("/{id}")
-    @PermitAll
     public ResponseEntity<Product> findById(@PathVariable(value = "id") UUID id) {
         return productService.findById(id)
                 .map(ResponseEntity::ok)
@@ -32,13 +28,11 @@ public class ProductController {
     }
 
     @PostMapping
-    @RolesAllowed("ADMIN")
     public ResponseEntity<Product> save(@RequestBody Product product) {
         return ResponseEntity.ok(productService.save(product));
     }
 
     @PutMapping("/{id}")
-    @RolesAllowed("ADMIN")
     public ResponseEntity<Product> update(@PathVariable(value = "id") UUID id, @RequestBody Product product) {
         return productService.findById(id)
                 .map(prod -> {
@@ -49,7 +43,6 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @RolesAllowed("ADMIN")
     public ResponseEntity<?> delete(@PathVariable(value = "id") UUID id) {
         return productService.findById(id)
                 .map(prod -> {
