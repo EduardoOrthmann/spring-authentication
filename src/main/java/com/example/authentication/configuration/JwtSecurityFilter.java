@@ -27,7 +27,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull  HttpServletResponse response, @NonNull  FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull  HttpServletResponse response,
+                                    @NonNull  FilterChain filterChain) throws ServletException, IOException {
+
         Optional<String> token = tokenService.getTokenFromHeader(request);
 
         if (token.isEmpty()) {

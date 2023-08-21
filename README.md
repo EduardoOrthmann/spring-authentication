@@ -6,7 +6,8 @@
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![H2](https://img.shields.io/badge/h2-%23316192.svg?style=for-the-badge)
 
-This project is an API built using **Java, Java Spring, H2 as the database, and Spring Security and JWT for authentication control.**
+This project is an API built using **Java, Java Spring, H2 as the database, and Spring Security and JWT for 
+authentication control.**
 
 This project was built for learning purposes.
 
